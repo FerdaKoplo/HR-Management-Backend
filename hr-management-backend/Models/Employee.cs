@@ -10,6 +10,7 @@
 
         // relations
 
+        public User User { get; set; }
         public Department Department { get; set; } // navigation property for employee perspective
         public JobTitle JobTitle { get; set; }
         public ICollection<Evaluation> Evaluations { get; set; } = new List<Evaluation>();

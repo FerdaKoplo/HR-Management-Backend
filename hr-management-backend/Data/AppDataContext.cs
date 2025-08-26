@@ -71,6 +71,22 @@ namespace hr_management_backend.Data
                 .WithMany() // if an employee can manage only one department
                 .HasForeignKey(d => d.ManagerId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                // Email should be unique
+                entity.HasIndex(u => u.Email).IsUnique();
+
+                // Default role
+                entity.Property(u => u.Role)
+                    .HasDefaultValue(UserRole.Employee);
+
+                // Relationship: User → Employee (optional, since EmployeeId is nullable)
+                entity.HasOne(u => u.Employee)
+                    .WithOne(e => e.User) // if Employee has a navigation property back
+                    .HasForeignKey<User>(u => u.EmployeeId)
+                    .OnDelete(DeleteBehavior.SetNull); // If employee deleted, keep user but set EmployeeId = null
+            });
         }
     }
 }
