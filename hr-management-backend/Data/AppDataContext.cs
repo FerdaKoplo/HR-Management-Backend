@@ -1,0 +1,76 @@
+﻿using hr_management_backend.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace hr_management_backend.Data
+{
+    public class AppDataContext : DbContext
+    {
+        public AppDataContext(DbContextOptions<AppDataContext> options) : base(options) { }
+
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Salary> Salaries { get; set; }
+        public DbSet<Recruitment> Recruitments { get; set; }
+        public DbSet<EmployeeTraining> EmployeeTraining { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<JobTitle> JobTitles { get; set; }
+        public DbSet<Training> Training { get; set; }
+        public DbSet<Evaluation> Evaluations { get; set; }
+        public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Department → Employees
+            modelBuilder.Entity<Employee>()
+                .HasOne(e => e.Department)
+                .WithMany(d => d.Employees)
+                .HasForeignKey(e => e.DepartmentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Employee → Attendance
+            modelBuilder.Entity<Attendance>()
+                .HasOne(a => a.Employee)
+                .WithMany(e => e.Attendances)
+                .HasForeignKey(a => a.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Employee → Salary
+            modelBuilder.Entity<Salary>()
+                .HasOne(s => s.Employee)
+                .WithMany(e => e.Salaries)
+                .HasForeignKey(s => s.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Employee → Evaluation
+            modelBuilder.Entity<Evaluation>()
+                .HasOne(ev => ev.Employee)
+                .WithMany(e => e.Evaluations)
+                .HasForeignKey(ev => ev.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // EmployeeTraining many-to-many
+            modelBuilder.Entity<EmployeeTraining>()
+                .HasKey(et => new { et.EmployeeId, et.TrainingId });
+
+            modelBuilder.Entity<EmployeeTraining>()
+                .HasOne(et => et.Employee)
+                .WithMany(e => e.EmployeeTrainings)
+                .HasForeignKey(et => et.EmployeeId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<EmployeeTraining>()
+                .HasOne(et => et.Training)
+                .WithMany(t => t.EmployeeTrainings)
+                .HasForeignKey(et => et.TrainingId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Department>()
+                .HasOne(d => d.Manager)
+                .WithMany() // if an employee can manage only one department
+                .HasForeignKey(d => d.ManagerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+    }
+}
