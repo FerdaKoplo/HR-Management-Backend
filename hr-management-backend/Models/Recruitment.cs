@@ -14,6 +14,6 @@
         public int JobTitleId { get; set; }
         public JobTitle JobTitle { get; set; }
         public DateTime AppliedOn { get; set; }
-        public RecruitmentStatus Status { get; set; }
+        public RecruitmentStatus Status { get; set; } = RecruitmentStatus.Pending;
     }
 }

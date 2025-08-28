@@ -1,10 +1,13 @@
-﻿using hr_management_backend.Data;
+﻿using AutoMapper;
+using hr_management_backend.Data;
 using hr_management_backend.DTOs.Auth;
 using hr_management_backend.Models;
+using hr_management_backend.Profiles;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace hr_management_backend.Services
 {
@@ -12,47 +15,50 @@ namespace hr_management_backend.Services
     {
         private readonly IConfiguration _config;
         private readonly AppDataContext _context;
+        private readonly IMapper _mapper;
 
-        public AuthService(IConfiguration config, AppDataContext context)
+        public AuthService(IConfiguration config, AppDataContext context, IMapper mapper)
         {
             _config = config;
             _context = context;
+            _mapper = mapper;
         }
 
-        public string? Login(UserLoginDto loginDto)
+        public async Task<string?> Login(string email, string password)
         {
-            var user = _context.Users.SingleOrDefault(u => u.Email == loginDto.Email);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+
             if (user == null) return null;
-            if (user.Password != loginDto.Password) return null;
+
+            if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+                return null;
 
             return GenerateJwtToken(user);
         }
 
-        public string? Register(UserRegisterDTO registerDTO)
-        {
-            // check if email already exist
-            var existingUser = _context.Users.SingleOrDefault(u => u.Email == registerDTO.Email);
-            if (existingUser != null)
-            {
-                return null; // or throw an exception / return error message
-            }
 
-            string passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password);
+        public async Task<string?> Register(string name, string email, string password)
+        {
+            var existingUser = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
+            if (existingUser != null)
+                return null;
+
+            string passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
             var newUser = new User
             {
-                Name = registerDTO.Name,
-                Email = registerDTO.Email,
+                Name = name,
+                Email = email,
                 Password = passwordHash,
             };
 
             _context.Users.Add(newUser);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             return GenerateJwtToken(newUser);
         }
 
-            
+
         private string GenerateJwtToken(User user)
         {
             var claims = new[]

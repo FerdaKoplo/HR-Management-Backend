@@ -1,7 +1,9 @@
 using hr_management_backend.Data;
+using hr_management_backend.Profiles;
 using hr_management_backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -40,8 +42,17 @@ builder.Services.AddDbContext<AppDataContext>(options =>
     )
 );
 
+
 // Add controllers
 builder.Services.AddControllers();
+
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddProfile<UserProfile>();
+    cfg.AddProfile<EmployeeProfile>();
+    cfg.AddProfile<DepartmentProfile>();
+});
+
 
 var app = builder.Build();
 

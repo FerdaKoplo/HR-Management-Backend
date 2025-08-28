@@ -24,10 +24,10 @@ namespace hr_management_backend.Data
 
             // Department → Employees
             modelBuilder.Entity<Employee>()
-                .HasOne(e => e.Department)
-                .WithMany(d => d.Employees)
-                .HasForeignKey(e => e.DepartmentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(e => e.JobTitle)
+                .WithMany(j => j.Employees)
+                .HasForeignKey(e => e.JobTitleId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Employee → Attendance
             modelBuilder.Entity<Attendance>()
@@ -66,6 +66,17 @@ namespace hr_management_backend.Data
                 .HasForeignKey(et => et.TrainingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<Recruitment>(entity =>
+            {
+                entity.Property(e => e.Status)
+                .HasDefaultValue(RecruitmentStatus.Pending);
+
+                entity.HasOne(r => r.JobTitle)
+                    .WithMany(j => j.Recruitments)
+                    .HasForeignKey(r => r.JobTitleId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<Department>()
                 .HasOne(d => d.Manager)
                 .WithMany() // if an employee can manage only one department
@@ -74,7 +85,6 @@ namespace hr_management_backend.Data
 
             modelBuilder.Entity<User>(entity =>
             {
-                // Email should be unique
                 entity.HasIndex(u => u.Email).IsUnique();
 
                 // Default role

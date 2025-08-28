@@ -10,9 +10,8 @@ namespace hr_management_backend.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-
         private readonly AuthService _authService;
-        
+
         public AuthController(AuthService authService)
         {
             _authService = authService;
@@ -20,28 +19,24 @@ namespace hr_management_backend.Controllers
 
         [HttpPost("login")]
         [AllowAnonymous]
-        public IActionResult Login([FromBody] UserLoginDto userLogin)
+        public async Task<IActionResult> Login([FromBody] UserLoginDto userLogin)
         {
-            var token = _authService.Login(userLogin);
+            var token = await _authService.Login(userLogin.Email, userLogin.Password);
 
             if (token == null)
-            {
                 return Unauthorized(new { message = "Invalid credentials" });
-            }
 
             return Ok(new { token });
         }
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public IActionResult Register([FromBody] UserRegisterDTO userRegister)
+        public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegister)
         {
-            var token = _authService.Register(userRegister);
+            var token = await _authService.Register(userRegister.Name, userRegister.Email, userRegister.Password);
 
             if (token == null)
-            {
-                return Unauthorized(new { message = "Invalid credentials" });
-            }
+                return BadRequest(new { message = "Email already exists" });
 
             return Ok(new { token });
         }
