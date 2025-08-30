@@ -33,6 +33,14 @@ builder.Services.AddAuthentication(options =>
 
 // add services
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<DepartmentService>();
+builder.Services.AddScoped<JobTitleService>();
+builder.Services.AddScoped<RecruitmentService>();
+builder.Services.AddScoped<SalaryService>();
+builder.Services.AddScoped<TrainingService>();
+builder.Services.AddScoped<EvaluationService>();
+builder.Services.AddScoped<AttendanceService>();
 
 // MySQL Database
 builder.Services.AddDbContext<AppDataContext>(options =>
@@ -43,16 +51,70 @@ builder.Services.AddDbContext<AppDataContext>(options =>
 );
 
 
+// swagger
+builder.Services.AddEndpointsApiExplorer();
+
+// jwt authorize test in swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "HR API", Version = "v1" });
+
+    // Add JWT Authentication
+    c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your valid token."
+    });
+
+    c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+
+
 // Add controllers
 builder.Services.AddControllers();
 
 builder.Services.AddAutoMapper(cfg =>
 {
-    cfg.AddProfile<UserProfile>();
-    cfg.AddProfile<EmployeeProfile>();
+    cfg.AddProfile<AttendanceProfile>();
     cfg.AddProfile<DepartmentProfile>();
+    cfg.AddProfile<EmployeeProfile>();
+    cfg.AddProfile<EvaluationProfile>();
+    cfg.AddProfile<JobTitleProfile>();
+    cfg.AddProfile<RecruitmentProfile>();
+    cfg.AddProfile<SalaryProfile>();
+    cfg.AddProfile<TrainingProfile>();
+    cfg.AddProfile<UserProfile>();
 });
 
+
+// cors
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -64,9 +126,17 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
+app.UseCors("AllowAll");
+app.UseHttpsRedirection();
+
+app.MapControllers();
+
+
+if (app.Environment.IsDevelopment())
 {
-    endpoints.MapControllers();
-});
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 app.Run();
+

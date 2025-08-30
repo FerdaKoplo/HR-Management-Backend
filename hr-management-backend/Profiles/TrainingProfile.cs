@@ -9,9 +9,13 @@ namespace hr_management_backend.Profiles
     {
         public TrainingProfile()
         {
+            CreateMap<CreateTrainingDTO, Training>();
+            CreateMap<UpdateTrainingDTO, Training>();
             CreateMap<TrainingDTO, Training>();
             CreateMap<TrainingDetailDTO, Training>();
 
+            CreateMap<Training, CreateTrainingDTO>();
+            CreateMap<Training, UpdateTrainingDTO>();
             CreateMap<Training, TrainingDTO>();
             CreateMap<Training, TrainingDetailDTO>();
         }

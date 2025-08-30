@@ -9,9 +9,13 @@ namespace hr_management_backend.Profiles
     {
         public SalaryProfile()
         {
+            CreateMap<CreateSalaryDTO, Salary>();
+            CreateMap<UpdateSalaryDTO, Salary>();
             CreateMap<SalaryDTO, Salary>();
             CreateMap<SalaryDetailDTO, Salary>();
 
+            CreateMap<Salary, UpdateSalaryDTO>();
+            CreateMap<Salary, CreateSalaryDTO>();
             CreateMap<Salary, SalaryDTO>();
             CreateMap<Salary, SalaryDetailDTO>();
         }

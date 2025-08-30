@@ -1,4 +1,5 @@
 ﻿using hr_management_backend.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace hr_management_backend.Data
@@ -87,15 +88,26 @@ namespace hr_management_backend.Data
             {
                 entity.HasIndex(u => u.Email).IsUnique();
 
-                // Default role
-                entity.Property(u => u.Role)
-                    .HasDefaultValue(UserRole.Employee);
-
+                entity.Property(u => u.Role);
                 // Relationship: User → Employee (optional, since EmployeeId is nullable)
                 entity.HasOne(u => u.Employee)
                     .WithOne(e => e.User) // if Employee has a navigation property back
                     .HasForeignKey<User>(u => u.EmployeeId)
                     .OnDelete(DeleteBehavior.SetNull); // If employee deleted, keep user but set EmployeeId = null
+            });
+
+            base.OnModelCreating(modelBuilder);
+
+            // Seed Admin user
+            var adminPassword = BCrypt.Net.BCrypt.HashPassword("Admin123!");
+
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id = 1, 
+                Name = "admin",
+                Email = "admin@example.com",
+                Password = adminPassword, 
+                Role = UserRole.Admin
             });
         }
     }

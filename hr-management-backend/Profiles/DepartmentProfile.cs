@@ -9,9 +9,13 @@ namespace hr_management_backend.Profiles
     {
         public DepartmentProfile()
         {
+            CreateMap<CreateDepartmentDTO, Department>();
+            CreateMap<UpdateDepartmentDTO, Department>();
             CreateMap<DepartmentDTO, Department>();
             CreateMap<DepartmentDetailDTO, Department>();
 
+            CreateMap<Department, CreateDepartmentDTO>();
+            CreateMap<Department, UpdateDepartmentDTO>();
             CreateMap<Department, DepartmentDTO>();
             CreateMap<Department, DepartmentDetailDTO>();
         }

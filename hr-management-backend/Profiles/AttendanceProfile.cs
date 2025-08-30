@@ -9,9 +9,13 @@ namespace hr_management_backend.Profiles
     {
         public AttendanceProfile()
         {
+            CreateMap<CreateAttendanceDTO, Attendance>();
+            CreateMap<UpdateAttendanceDTO, Attendance>();
             CreateMap<AttendanceDTO, Attendance>();
             CreateMap<AttendanceDetailDTO, Attendance>();
 
+            CreateMap<Attendance, CreateAttendanceDTO>();
+            CreateMap<Attendance, UpdateAttendanceDTO>();
             CreateMap<Attendance, AttendanceDTO>();
             CreateMap<Attendance, AttendanceDetailDTO>();
         }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using hr_management_backend.Data;
 
@@ -10,9 +11,11 @@ using hr_management_backend.Data;
 namespace hr_management_backend.Migrations
 {
     [DbContext(typeof(AppDataContext))]
-    partial class AppDataContextModelSnapshot : ModelSnapshot
+    [Migration("20250830130645_SeedAdminUser")]
+    partial class SeedAdminUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,7 +245,9 @@ namespace hr_management_backend.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.HasKey("Id");
 
@@ -260,7 +265,7 @@ namespace hr_management_backend.Migrations
                             Id = 1,
                             Email = "admin@example.com",
                             Name = "admin",
-                            Password = "$2a$11$eCSdIXVfJzXubQqCSGEFY.obqKlKs8Kphs2nz0d1D3TnrV87fS9kC",
+                            Password = "$2a$11$91uBQQjq9gBVVQ1tZp.bA.202DBvwJ.BJbZjNH/K577AgQ.0ZoHOi",
                             Role = 0
                         });
                 });

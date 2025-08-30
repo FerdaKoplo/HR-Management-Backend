@@ -9,9 +9,13 @@ namespace hr_management_backend.Profiles
     {
         public RecruitmentProfile()
         {
+            CreateMap<CreateRecruitmentDTO, Recruitment>();
+            CreateMap<UpdateRecruitmentDTO, Recruitment>();
             CreateMap<RecruitmentDTO, Recruitment>();
             CreateMap<RecruitmentDetailDTO, Recruitment>();
 
+            CreateMap<Recruitment, CreateRecruitmentDTO>();
+            CreateMap<Recruitment, UpdateRecruitmentDTO>();
             CreateMap<Recruitment, RecruitmentDTO>();
             CreateMap<Recruitment, RecruitmentDetailDTO>();
         }

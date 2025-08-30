@@ -9,9 +9,14 @@ namespace hr_management_backend.Profiles
     {
         public JobTitleProfile()
         {
+            CreateMap<CreateJobTitleDTO, JobTitle>();
+            CreateMap<UpdateJobTitleDTO, JobTitle>();
             CreateMap<JobTitleDTO, JobTitle>();
             CreateMap<JobTitleDetailDTO, JobTitle>();
 
+            
+            CreateMap<JobTitle,  CreateJobTitleDTO>();
+            CreateMap<JobTitle,  UpdateJobTitleDTO>();
             CreateMap<JobTitle, JobTitleDTO>();
             CreateMap<JobTitle, JobTitleDetailDTO>();
         }
