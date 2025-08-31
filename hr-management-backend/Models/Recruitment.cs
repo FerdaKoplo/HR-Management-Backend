@@ -1,13 +1,13 @@
 ﻿namespace hr_management_backend.Models
 {
-    public enum RecruitmentStatus
+    public enum RecruitmentStatus 
     {
         Pending,
         Accepted,
         Rejected
     }
 
-    public class Recruitment
+    public class Recruitment : BaseEntity
     {
         public int Id { get; set; }
         public string CandidateName { get; set; }

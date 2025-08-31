@@ -1,9 +1,9 @@
 ﻿
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace hr_management_backend.Models
+namespace hr_management_backend.Models 
 {
-    public class Salary
+    public class Salary : BaseEntity
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }

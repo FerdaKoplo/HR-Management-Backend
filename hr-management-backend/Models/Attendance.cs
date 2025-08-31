@@ -3,7 +3,7 @@
 
 namespace hr_management_backend.Models
 {
-    public class Attendance
+    public class Attendance : BaseEntity
     {
         public int Id { get; set; }
         public int EmployeeId { get; set; }

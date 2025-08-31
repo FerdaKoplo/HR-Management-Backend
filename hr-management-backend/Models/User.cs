@@ -1,6 +1,6 @@
 ﻿namespace hr_management_backend.Models
 {
-    public class User
+    public class User : BaseEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }
