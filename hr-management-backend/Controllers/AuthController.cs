@@ -2,6 +2,7 @@
 using hr_management_backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace hr_management_backend.Controllers
 {
@@ -21,24 +22,25 @@ namespace hr_management_backend.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] UserLoginDto userLogin)
         {
-            var token = await _authService.Login(userLogin.Email, userLogin.Password);
+            var result = await _authService.Login(userLogin.Email, userLogin.Password);
 
-            if (token == null)
+            if (result == null)
                 return Unauthorized(new { message = "Invalid credentials" });
 
-            return Ok(new { token });
+
+            return Ok(new { result });
         }
 
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegister)
         {
-            var token = await _authService.Register(userRegister.Name, userRegister.Email, userRegister.Password);
+            var result = await _authService.Register(userRegister.Name, userRegister.Email, userRegister.Password);
 
-            if (token == null)
+            if (result == null)
                 return BadRequest(new { message = "Email already exists" });
 
-            return Ok(new { token });
+            return Ok(new { result });
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using AutoMapper;
 using hr_management_backend.Data;
+using hr_management_backend.DTOs;
 using hr_management_backend.DTOs.Auth;
 using hr_management_backend.Models;
 using hr_management_backend.Profiles;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.EntityFrameworkCore;
 
 namespace hr_management_backend.Services
 {
@@ -24,7 +25,7 @@ namespace hr_management_backend.Services
             _mapper = mapper;
         }
 
-        public async Task<string?> Login(string email, string password)
+        public async Task<UserAuthResponseDTO?> Login(string email, string password)
         {
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
 
@@ -32,12 +33,22 @@ namespace hr_management_backend.Services
 
             if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
                 return null;
+            var token = GenerateJwtToken(user);
 
-            return GenerateJwtToken(user);
+            return new UserAuthResponseDTO
+            {
+                Token = token,
+                User = new UserDTO
+                {
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email
+                }
+            };
         }
 
 
-        public async Task<string?> Register(string name, string email, string password)
+        public async Task<UserAuthResponseDTO?> Register(string name, string email, string password)
         {
             var existingUser = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
             if (existingUser != null)
@@ -55,9 +66,19 @@ namespace hr_management_backend.Services
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
-            return GenerateJwtToken(newUser);
-        }
+            var token = GenerateJwtToken(newUser);
 
+            return new UserAuthResponseDTO
+            {
+                Token = token,
+                User = new UserDTO
+                {
+                    Id = newUser.Id,
+                    Name = newUser.Name,
+                    Email = newUser.Email
+                }
+            };
+        }
 
         private string GenerateJwtToken(User user)
         {

@@ -1,4 +1,4 @@
-using hr_management_backend.Data;
+﻿using hr_management_backend.Data;
 using hr_management_backend.Profiles;
 using hr_management_backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -108,11 +108,12 @@ builder.Services.AddAutoMapper(cfg =>
 // cors
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:5173") 
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials(); 
     });
 });
 
@@ -126,7 +127,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 
 app.MapControllers();
