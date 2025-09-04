@@ -21,6 +21,7 @@ namespace hr_management_backend.Models
     public enum UserRole
     {
         Admin,
-        Employee
+        Employee,
+        DepartmentManager
     }
 }

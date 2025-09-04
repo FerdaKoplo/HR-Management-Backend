@@ -124,10 +124,12 @@ var app = builder.Build();
 // ----------------------------
 app.UseRouting();
 
+app.UseCors("AllowFrontend");
+
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors("AllowFrontend");
 app.UseHttpsRedirection();
 
 app.MapControllers();

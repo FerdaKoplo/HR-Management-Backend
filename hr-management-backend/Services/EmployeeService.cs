@@ -76,11 +76,6 @@ namespace hr_management_backend.Services
                 .ToListAsync();
         }
 
-        public async Task<List<Salary>> GetSalariesByEmployeeAsync(int employeeId)
-        {
-            return await _context.Salaries
-                .Where(s => s.EmployeeId == employeeId)
-                .ToListAsync();
-        }
+   
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using hr_management_backend.DTOs.Employee;
+using hr_management_backend.DTOs.Salary;
 using hr_management_backend.Models;
 using hr_management_backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -15,6 +16,7 @@ namespace hr_management_backend.Controllers
     public class EmployeeController : ControllerBase
     {
         private readonly EmployeeService _employeeService;
+        private readonly SalaryService _salaryService;
         private readonly IMapper _mapper;
 
         public EmployeeController(EmployeeService employeeService, IMapper mapper)
@@ -81,8 +83,8 @@ namespace hr_management_backend.Controllers
         [HttpGet("{id}/salaries")]
         public async Task<IActionResult> GetEmployeeSalaries(int id)
         {
-            var employees = await _employeeService.GetSalariesByEmployeeAsync(id);
-            var dto = _mapper.Map<List<EmployeeDTO>>(employees);
+            var employees = await _salaryService.GetSalariesByEmployeeAsync(id);
+            var dto = _mapper.Map<List<SalaryDetailDTO>>(employees);
             return Ok(dto);
         }
     }

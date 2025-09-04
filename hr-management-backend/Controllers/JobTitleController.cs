@@ -25,11 +25,21 @@ namespace hr_management_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllJobTitle()
+        public async Task<IActionResult> GetAllJobTitle([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var jobTitle = await _jobTitleService.GetJobTitlesAsync();
-            var dto = _mapper.Map<List<JobTitleDTO>>(jobTitle);
-            return Ok(dto);
+            var (jobTitles, totalCount) = await _jobTitleService.GetJobTitlesPaginatedAsync(page, pageSize);
+            var dto = _mapper.Map<List<JobTitleDTO>>(jobTitles);
+
+            var response = new
+            {
+                data = dto,
+                page,
+                pageSize,
+                totalCount,
+                totalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+            };
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

@@ -13,11 +13,17 @@ namespace hr_management_backend.Services
             _context = context;
         }
 
-        public async Task<List<JobTitle>> GetJobTitlesAsync()
+        public async Task<(List<JobTitle> Items, int TotalCount)> GetJobTitlesPaginatedAsync(int page = 1, int pageSize = 10)
         {
-            return await _context.JobTitles
+            var totalCount = await _context.JobTitles.CountAsync();
+
+            var items = await _context.JobTitles
                 .Include(j => j.Employees)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return (items, totalCount);
         }
         public async Task<JobTitle?> GetJobTitleByIdAsync(int id)
         {
